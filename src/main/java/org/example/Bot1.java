@@ -2,13 +2,12 @@ package org.example;
 
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.Location;
-import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
-import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class Bot1 extends TelegramLongPollingBot {
@@ -17,34 +16,32 @@ public class Bot1 extends TelegramLongPollingBot {
 
 	@Override
 	public void onUpdateReceived(Update update) {
-
-		Message message = update.getMessage();
-		Long chatId = message.getChatId();
-		System.out.println(chatId);
-		System.out.println(a);
-		String text = message.getText();
-		SendMessage send = new SendMessage();
-		if (a == 0L) {
-			System.out.println("kirdim");
-			a = chatId;
-		} else if (a.equals(chatId)) {
-			if (b != 0L) {
-				send.setChatId(b);
-				send.setText(text);
-			}
-		} else if (b.equals(chatId)) {
-				send.setChatId(a);
-				send.setText(text);
-		} else {
-			b = chatId;
-			send.setText(text);
-			send.setChatId(a);}
 		try {
-			if(send.getChatId()!=null)
-			execute(send);
-		} catch (TelegramApiException e) {
+			SendMessage message = new SendMessage();
+			Long chatId = update.getMessage().getChatId();
+			message.setChatId(chatId);
+			message.setText("click button");
+			ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup();
+			List < KeyboardRow > list = new ArrayList <>();
+			KeyboardRow row = new KeyboardRow();
+			KeyboardButton button = new KeyboardButton();
+			KeyboardButton button1 = new KeyboardButton();
+			button.setText("test");
+			button1.setText("javob");
+			row.add(button);
+			row.add(button1);
+
+
+			list.add(row);
+
+			markup.setKeyboard(list);
+            message.setReplyMarkup(markup);
+			execute(message);
+
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+
 
 	}
 
