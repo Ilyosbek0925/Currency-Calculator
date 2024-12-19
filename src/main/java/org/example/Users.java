@@ -5,6 +5,11 @@ public class Users {
 	String email;
 	long id;
 	States state;
+	Currency currency;
+
+	public void setCurrency(Currency currency) {
+		this.currency = currency;
+	}
 
 	public Users(String name, String email, char id, States state) {
 		this.name = name;
@@ -12,6 +17,7 @@ public class Users {
 		this.id = id;
 		this.state = state;
 	}
+
 	public Users(Long id, States state) {
 		this.id = id;
 		this.state = state;

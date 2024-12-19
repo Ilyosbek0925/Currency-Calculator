@@ -1,16 +1,13 @@
 package org.example;
 
-import jdk.jshell.Snippet;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 
-import javax.lang.model.element.NestingKind;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -27,35 +24,72 @@ public class Bot1 extends TelegramLongPollingBot {
 		executor.execute(() -> {
 			try {
 				Message message = update.getMessage();
+				if(message==null){
+					String data = update.getCallbackQuery().getData();
+					Long chatId = update.getCallbackQuery().getMessage().getChatId();
+					Users user = UserService.findUser(chatId, list);
+					user.setState(States.EMAIL);
+sendMessage.setText(data +" --> hisoblash uchun miqdorni kiriting : ");
+sendMessage.setChatId(chatId);
+execute(sendMessage);
+return;
+				}
 				Long chatId = message.getChatId();
 				if (message.getText().equals("/start")) {
 					sendMessage.setChatId(chatId);
-					sendMessage.setText("Isminginni kiriting : ");
+					sendMessage.setText("Assalomu Aleykum\uD83D\uDE0A.Valyuta hisoblovchi botimizga hush kelibsiz\uD83E\uDD29.Sizni qanday chaqirsak bo'ladi? ");
 					execute(sendMessage);
 					System.out.println(chatId);
 					list.add(new Users(chatId, States.NAME));
 					return;
 				}
-				Users user = null;
-				for (Users users : list) {
-					if (users.getId() == chatId) {
-						user = users;
-					}
-				}
+				Users user = UserService.findUser(chatId,list);
+
 				if (user.getState().equals(States.NAME)) {
 					String name = message.getText();
 					user.setName(name);
 					user.setState(States.EMAIL);
-					sendMessage.setChatId(chatId);
-					sendMessage.setText("Emailingizni kiriting");
-					execute(sendMessage);
+
+// Tugma yaratish
+					InlineKeyboardButton button1 = new InlineKeyboardButton();
+					button1.setText("USD \uD83C\uDDFA\uD83C\uDDF8"); // Tugma matni
+					button1.setCallbackData("USD"); // Callback ma'lumot
+
+					InlineKeyboardButton button2 = new InlineKeyboardButton();
+					button2.setText("RUB \uD83C\uDDF7\uD83C\uDDFA");
+					button2.setCallbackData("RUB");
+					InlineKeyboardButton button3 = new InlineKeyboardButton();
+					button3.setText("EUR \uD83C\uDDEA\uD83C\uDDFA");
+					button3.setCallbackData("EUR");
+
+// Tugmalarni qatorga qo'shish
+					List < InlineKeyboardButton > row1 = new ArrayList <>();
+					row1.add(button1);
+					row1.add(button2);
+					row1.add(button3);
+
+// Qatorlarni tugma paneliga qo'shish
+					List < List < InlineKeyboardButton > > rows = new ArrayList <>();
+					rows.add(row1);
+					InlineKeyboardMarkup markup = new InlineKeyboardMarkup();
+					markup.setKeyboard(rows);
+// Panelni xabarga biriktirish
+					SendMessage Sendmessage = new SendMessage();
+					Sendmessage.setChatId(chatId);
+					Sendmessage.setText("Valyutani kiriting \uD83D\uDD3B");
+					Sendmessage.setReplyMarkup(markup);
+					try {
+						execute(Sendmessage);
+						System.out.println("ketti");
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 					return;
 				} else if (user.getState().equals(States.EMAIL)) {
-					String email = message.getText();
-					user.setEmail(email);
-					user.setState(States.KOD);
+					String amount = message.getText();
+
+
 					sendMessage.setChatId(chatId);
-					sendMessage.setText("emailingizga kod bordi kodni kiriting");
 					execute(sendMessage);
 					return;
 				} else if (user.getState().equals(States.KOD)) {
@@ -66,21 +100,7 @@ public class Bot1 extends TelegramLongPollingBot {
 					execute(sendMessage);
 					return;
 				}
-
-//				sendMessage.setText("click button");
-//				ReplyKeyboardMarkup markup = new ReplyKeyboardMarkup();
-//				List < KeyboardRow > list = new ArrayList <>();
-//				KeyboardRow row = new KeyboardRow();
-//				KeyboardButton button = new KeyboardButton();
-//				KeyboardButton button1 = new KeyboardButton();
-//				button.setText("test");
-//				button1.setText("javob");
-//				row.add(button);
-//				row.add(button1);
-//				list.add(row);
-//				markup.setKeyboard(list);
-//				sendMessage.setReplyMarkup(markup);
-//				execute(sendMessage);
+				execute(sendMessage);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
@@ -90,11 +110,11 @@ public class Bot1 extends TelegramLongPollingBot {
 
 	@Override
 	public String getBotUsername() {
-		return "Bobo5052_bot";
+		return "@CurrencyCalculator_toSUM_bot";
 	}
 
 	@Override
 	public String getBotToken() {
-		return "7596247893:AAHUdB4V-yc89z-sNfoxI8XVG-_5deh-ojw";
+		return "7107800742:AAE1CyXOpsoVAIF9Ygna6QZxhoH9KsA4sdU";
 	}
 }
