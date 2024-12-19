@@ -1,5 +1,6 @@
 package org.example;
 
+import com.google.gson.Gson;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -24,15 +25,16 @@ public class Bot1 extends TelegramLongPollingBot {
 		executor.execute(() -> {
 			try {
 				Message message = update.getMessage();
-				if(message==null){
+				if (message == null) {
 					String data = update.getCallbackQuery().getData();
 					Long chatId = update.getCallbackQuery().getMessage().getChatId();
 					Users user = UserService.findUser(chatId, list);
+					user.setCurrency(data);
 					user.setState(States.EMAIL);
-sendMessage.setText(data +" --> hisoblash uchun miqdorni kiriting : ");
-sendMessage.setChatId(chatId);
-execute(sendMessage);
-return;
+					sendMessage.setText(data + " -- hisoblash uchun miqdorni kiriting : ");
+					sendMessage.setChatId(chatId);
+					execute(sendMessage);
+					return;
 				}
 				Long chatId = message.getChatId();
 				if (message.getText().equals("/start")) {
@@ -43,7 +45,7 @@ return;
 					list.add(new Users(chatId, States.NAME));
 					return;
 				}
-				Users user = UserService.findUser(chatId,list);
+				Users user = UserService.findUser(chatId, list);
 
 				if (user.getState().equals(States.NAME)) {
 					String name = message.getText();
@@ -86,10 +88,20 @@ return;
 					}
 					return;
 				} else if (user.getState().equals(States.EMAIL)) {
-					String amount = message.getText();
+					double amount = Integer.parseInt(message.getText());
+					String s = InternetSetting.setCurrency();
+					Gson gson = new Gson();
+					Post[] post = gson.fromJson(s, Post[].class);
+							double result=0;
+					for (int i = 0; i < post.length; i++) {
+						if (post[i].getCcy().equals(Currency.USD.name)){
+result= amount * Double.parseDouble(post[ i ].getRate());
 
+						}
+					}
+sendMessage.setText(amount+ "\t"+user.getCurrency()+" = "+String.valueOf(result)+"\tSUM");
+sendMessage.setChatId(chatId);
 
-					sendMessage.setChatId(chatId);
 					execute(sendMessage);
 					return;
 				} else if (user.getState().equals(States.KOD)) {

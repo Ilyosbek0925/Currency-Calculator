@@ -5,9 +5,13 @@ public class Users {
 	String email;
 	long id;
 	States state;
-	Currency currency;
+	String currency;
 
-	public void setCurrency(Currency currency) {
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
 		this.currency = currency;
 	}
 
