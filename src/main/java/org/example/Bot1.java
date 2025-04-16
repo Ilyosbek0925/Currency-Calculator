@@ -75,11 +75,11 @@ public class Bot1 extends TelegramLongPollingBot {
 
 	@Override
 	public String getBotUsername() {
-		return "@CurrencyCalculator_toSUM_bot";
+		return "@valyutahisoblash_bot";
 	}
 
 	@Override
 	public String getBotToken() {
-		return "7107800742:AAE1CyXOpsoVAIF9Ygna6QZxhoH9KsA4sdU";
+		return "7623169696:AAHZCoKsUop-4Vg-Z70eHTmz4OO4BWRe31I";
 	}
 }
